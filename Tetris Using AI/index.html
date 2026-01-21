@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tetris - Finger Controlled Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Permission Request Modal -->
+    <div id="permissionModal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 1000;">
+        <div style="background: rgba(30, 60, 114, 0.95); padding: 40px; border-radius: 15px; border: 2px solid #00ff88; text-align: center; max-width: 500px; box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);">
+            <h1 style="color: #00ff88; margin-bottom: 20px; font-size: 28px;">🎮 AI TETRIS</h1>
+            <p style="color: #fff; font-size: 18px; margin-bottom: 15px;">This game requires webcam access to detect your hand movements.</p>
+            <p style="color: #ffc800; font-size: 14px; margin-bottom: 30px;">✋ Your index finger controls the blocks left and right.</p>
+            <p style="color: #ff0000; font-size: 16px; font-weight: bold; margin-bottom: 30px;">⚠️ Click "ALLOW" when your browser asks for camera permission</p>
+            <button id="startGameBtn" style="padding: 15px 40px; background: #00ff88; color: #000; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 10px; width: 100%;">
+                📷 START GAME & ENABLE CAMERA
+            </button>
+            <p style="color: #999; font-size: 12px; margin-top: 20px;">Your camera feed is only used locally and never sent anywhere.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Left Window: Webcam Feed with Finger Detection -->
+        <div class="window camera-window">
+            <h2>Hand Detection</h2>
+            <div class="camera-container">
+                <video id="webcam" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+                <div class="finger-info">
+                    <p><strong>Camera Status:</strong></p>
+                    <p>Status: <span id="status">📷 Initializing...</span></p>
+                    <p>X: <span id="fingerX">--</span></p>
+                    <p>Y: <span id="fingerY">--</span></p>
+                    <p style="font-size: 12px; margin-top: 10px; color: #ffc800;">
+                        ⚠️ Click "Allow" when your browser asks for camera permission
+                    </p>
+                    <button id="retryBtn" style="display: none; margin-top: 10px; padding: 8px 12px; background: #00ff88; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        🔄 Retry Camera
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Window: Tetris Game -->
+        <div class="window game-window">
+            <h2>Tetris</h2>
+            <div class="game-container">
+                <canvas id="gameCanvas" width="300" height="600"></canvas>
+                <div class="game-info">
+                    <div class="score-board">
+                        <p>Score: <span id="score">0</span></p>
+                        <p>Lines: <span id="lines">0</span></p>
+                        <p>Level: <span id="level">1</span></p>
+                    </div>
+                    <div class="controls">
+                        <p>Use fingers to move blocks</p>
+                        <p>Two fingers to rotate</p>
+                        <p>Space to drop</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- MediaPipe Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    
+    <!-- Load Check Script -->
+    <script>
+        console.log('[Index] Scripts loaded, checking MediaPipe libraries...');
+        console.log('[Index] window.Hands:', typeof window.Hands);
+        console.log('[Index] window.Camera:', typeof window.Camera);
+        console.log('[Index] window.drawConnectors:', typeof window.drawConnectors);
+        console.log('[Index] window.drawLandmarks:', typeof window.drawLandmarks);
+        console.log('[Index] window.HAND_CONNECTIONS:', typeof window.HAND_CONNECTIONS);
+    </script>
+    
+    <!-- Game Scripts -->
+    <script src="config.js"></script>
+    <script src="tetris.js"></script>
+    <script src="hand-detector.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
