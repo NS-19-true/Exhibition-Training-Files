@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Gateway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(0);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-card .thumbnail {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4em;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card .snake-bg { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .game-card .flappy-bg { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .game-card .minesweeper-bg { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .game-card .dash-bg { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .game-card .fps-bg { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+
+        .game-card .info {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .game-card h2 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .game-card p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .play-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Games Gateway</h1>
+            <p>Choose your game and have fun!</p>
+        </div>
+
+        <div class="games-grid">
+            <!-- Snake Game -->
+            <div class="game-card">
+                <div class="thumbnail snake-bg">🐍</div>
+                <div class="info">
+                    <h2>Snake Xenzia</h2>
+                    <p>Classic Nokia phone game. Control the snake and eat food while avoiding walls and yourself.</p>
+                    <button class="play-btn" onclick="window.location.href='snake.html'">Play Now</button>
+                </div>
+            </div>
+
+            <!-- Flappy Bird Game -->
+            <div class="game-card">
+                <div class="thumbnail flappy-bg">🐦</div>
+                <div class="info">
+                    <h2>Flappy Bird</h2>
+                    <p>Tap to make the bird fly. Avoid the pipes and see how far you can go!</p>
+                    <button class="play-btn" onclick="window.location.href='flappy.html'">Play Now</button>
+                </div>
+            </div>
+
+            <!-- Minesweeper Game -->
+            <div class="game-card">
+                <div class="thumbnail minesweeper-bg">💣</div>
+                <div class="info">
+                    <h2>Minesweeper</h2>
+                    <p>Classic puzzle game. Click to reveal tiles and uncover all safe tiles without hitting mines.</p>
+                    <button class="play-btn" onclick="window.location.href='minesweeper.html'">Play Now</button>
+                </div>
+            </div>
+
+            <!-- Geometry Dash Game -->
+            <div class="game-card">
+                <div class="thumbnail dash-bg">▶️</div>
+                <div class="info">
+                    <h2>Geometry Dash</h2>
+                    <p>Jump through obstacles to the beat. Time your jumps perfectly to survive!</p>
+                    <button class="play-btn" onclick="window.location.href='geometry-dash.html'">Play Now</button>
+                </div>
+            </div>
+
+            <!-- FPS Game -->
+            <div class="game-card">
+                <div class="thumbnail fps-bg">🔫</div>
+                <div class="info">
+                    <h2>First Person Shooter</h2>
+                    <p>3D shooting game. Use WASD to move, mouse to look, click to shoot. Defeat all enemies!</p>
+                    <button class="play-btn" onclick="window.location.href='fps.html'">Play Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

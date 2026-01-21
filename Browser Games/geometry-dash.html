@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Dash</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #fa709a;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        canvas {
+            border: 3px solid #fa709a;
+            display: block;
+            margin: 20px auto;
+            background: linear-gradient(to bottom, #87ceeb, #e0f6ff);
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .info div {
+            font-weight: bold;
+        }
+
+        .score {
+            color: #fa709a;
+        }
+
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            color: #333;
+        }
+
+        .button {
+            background: #fa709a;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            background: #fee140;
+            color: #333;
+            transform: scale(1.05);
+        }
+
+        .back-btn {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-btn:hover {
+            background: #764ba2;
+        }
+
+        .game-over-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            font-size: 2.5em;
+            color: #fa709a;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            font-size: 1.5em;
+            color: #333;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>▶️ Geometry Dash</h1>
+        <canvas id="gameCanvas" width="600" height="400" tabindex="0"></canvas>
+        
+        <div class="info">
+            <div>Distance: <span class="score" id="score">0</span>m</div>
+        </div>
+
+        <div class="controls">
+            <p>Press SPACE or Click to jump • Avoid the obstacles!</p>
+            <p id="gameStatus">Click to start playing</p>
+            <button class="button" onclick="startGame()">Start Game</button>
+        </div>
+
+        <button class="back-btn" onclick="window.location.href='index.html'">← Back to Games</button>
+    </div>
+
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="modal-content">
+            <h2>Game Over!</h2>
+            <p>Distance: <span id="finalScore">0</span>m</p>
+            <button class="button" onclick="startGame()">Play Again</button>
+            <button class="button" onclick="window.location.href='index.html'">Back to Games</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let player = {
+            x: 50,
+            y: canvas.height - 80,
+            width: 30,
+            height: 30,
+            dy: 0,
+            jumping: false,
+            gravity: 0.7,
+            jumpPower: -15
+        };
+
+        let obstacles = [];
+        let score = 0;
+        let gameRunning = false;
+        let gameLoopId = null;
+        let obstacleCounter = 0;
+        const groundY = canvas.height - 50;
+        const obstacleFrequency = 80;
+
+        // Event listeners
+        window.addEventListener('keydown', handleKeyPress, true);
+        canvas.addEventListener('click', handleJump);
+        
+        function handleKeyPress(e) {
+            if (e.code === 'Space' || e.key === ' ') {
+                e.preventDefault();
+                handleJump();
+            }
+        }
+
+        function handleJump() {
+            if (gameRunning && !player.jumping) {
+                player.dy = player.jumpPower;
+                player.jumping = true;
+            }
+        }
+
+        function startGame() {
+            player = {
+                x: 50,
+                y: groundY,
+                width: 30,
+                height: 30,
+                dy: 0,
+                jumping: false,
+                gravity: 0.7,
+                jumpPower: -15
+            };
+            obstacles = [];
+            score = 0;
+            obstacleCounter = 0;
+            gameRunning = true;
+            document.getElementById('gameOverModal').style.display = 'none';
+            document.getElementById('score').textContent = score;
+            document.getElementById('gameStatus').textContent = 'Game Running... Press SPACE to jump!';
+            canvas.focus();
+            
+            if (gameLoopId) clearInterval(gameLoopId);
+            gameLoopId = setInterval(gameLoop, 30);
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            // Update player
+            player.dy += player.gravity;
+            player.y += player.dy;
+
+            // Ground collision
+            if (player.y + player.height >= groundY) {
+                player.y = groundY;
+                player.dy = 0;
+                player.jumping = false;
+            }
+
+            // Generate obstacles
+            obstacleCounter++;
+            if (obstacleCounter > obstacleFrequency) {
+                let obstacleHeight = 30 + Math.random() * 20;
+                obstacles.push({
+                    x: canvas.width,
+                    y: groundY - obstacleHeight,
+                    width: 25,
+                    height: obstacleHeight,
+                    passed: false
+                });
+                obstacleCounter = 0;
+            }
+
+            // Update obstacles
+            obstacles = obstacles.filter(obs => obs.x + obs.width > 0);
+            
+            for (let obs of obstacles) {
+                obs.x -= 7;
+
+                // Collision detection
+                if (player.x + player.width > obs.x &&
+                    player.x < obs.x + obs.width &&
+                    player.y + player.height > obs.y) {
+                    endGame();
+                    return;
+                }
+
+                // Score
+                if (!obs.passed && player.x > obs.x + obs.width) {
+                    obs.passed = true;
+                    score += 1;
+                    document.getElementById('score').textContent = score;
+                }
+            }
+
+            draw();
+
+        }
+
+        function draw() {
+            // Sky
+            ctx.fillStyle = '#87ceeb';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Ground
+            ctx.fillStyle = '#90EE90';
+            ctx.fillRect(0, groundY + player.height, canvas.width, canvas.height - groundY - player.height);
+
+            // Grid
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.width; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+
+            // Player
+            ctx.fillStyle = '#FF6B6B';
+            ctx.save();
+            ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(-player.width / 2, -player.height / 2, player.width, player.height);
+            ctx.restore();
+
+            // Obstacles
+            ctx.fillStyle = '#333';
+            for (let obs of obstacles) {
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                ctx.fillStyle = '#666';
+                ctx.fillRect(obs.x + 2, obs.y + 2, obs.width - 4, obs.height - 4);
+                ctx.fillStyle = '#333';
+            }
+        }
+
+        function endGame() {
+            gameRunning = false;
+            clearInterval(gameLoopId);
+            document.getElementById('gameStatus').textContent = 'Game Over!';
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('gameOverModal').style.display = 'flex';
+        }
+
+        // Initial draw
+        draw();
+    </script>
+</body>
+</html>
